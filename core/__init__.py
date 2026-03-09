@@ -8,6 +8,11 @@ from .transmon import (
     transmon_spectrum,
     transmon_properties,
 )
+from .cqed import (
+    jaynes_cummings_hamiltonian,
+    jaynes_cummings_spectrum,
+    vacuum_rabi_splitting,
+)
 
 __all__ = [
     "resonance_frequency",
@@ -18,4 +23,7 @@ __all__ = [
     "transmon_hamiltonian",
     "transmon_spectrum",
     "transmon_properties",
+    "jaynes_cummings_hamiltonian",
+    "jaynes_cummings_spectrum",
+    "vacuum_rabi_splitting",
 ]
