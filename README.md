@@ -174,6 +174,17 @@ OK
 
 ---
 
+# Quick Demo (copy/paste)
+
+```
+python3 -m experiments.lc_resonance_validation
+python3 -m experiments.transmon_spectrum
+```
+
+Both scripts are self-contained and print PASS/summary lines for sanity checks.
+
+---
+
 # Installation
 
 Clone repository
