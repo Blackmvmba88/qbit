@@ -182,6 +182,7 @@ python3 -m experiments.transmon_spectrum
 python3 -m analysis.transmon_parameter_sweep --ej-ec-start 20 --ej-ec-stop 80 --num 10 --out data/transmon_sweep.csv
 python3 -m analysis.transmon_plots --csv data/transmon_sweep.csv --out plots
 python3 -m experiments.cqed_spectrum
+python3 -m experiments.rabi_simulation
 ```
 
 Both scripts are self-contained and print PASS/summary lines for sanity checks.
