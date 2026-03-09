@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taquimecanografía Neón</title>
+  <style>
+    :root {
+      --bg: #05060a;
+      --panel: rgba(12, 14, 22, 0.82);
+      --neon-pink: #ff4dd2;
+      --neon-cyan: #49f5ff;
+      --neon-lime: #5af78e;
+      --neon-yellow: #f8f25a;
+      --text: #e9ecf2;
+      --muted: #8a93b2;
+      --error: #ff6b6b;
+      --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+      background: radial-gradient(120% 120% at 20% 20%, rgba(255, 77, 210, 0.15), transparent 50%),
+                  radial-gradient(120% 120% at 80% 0%, rgba(73, 245, 255, 0.16), transparent 45%),
+                  linear-gradient(135deg, #05060a 0%, #0a0c14 60%, #05060a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: min(1180px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 22px 28px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 0 18px rgba(73,245,255,0.08);
+      backdrop-filter: blur(8px);
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+    }
+    .typewriter-art {
+      font-family: "Courier New", monospace;
+      line-height: 1.05;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 6px rgba(73,245,255,0.6);
+      white-space: pre;
+      margin: 0;
+    }
+    .title-block h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0.5px;
+    }
+    .title-block p { margin: 4px 0 0; color: var(--muted); }
+    .pill { border: 1px solid var(--border); padding: 6px 10px; border-radius: 8px; color: var(--neon-lime); }
+
+    .prompt-row { margin-top: 18px; display: grid; grid-template-columns: 1fr 160px; gap: 12px; align-items: start; }
+    .prompt-box {
+      background: rgba(255,255,255,0.02);
+      border: 1px dashed rgba(73,245,255,0.3);
+      border-radius: 12px;
+      padding: 12px 14px;
+      min-height: 82px;
+      box-shadow: inset 0 0 12px rgba(73,245,255,0.12);
+    }
+    .prompt-label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .prompt-text { margin: 6px 0 0; font-size: 18px; line-height: 1.5; }
+
+    textarea#typed {
+      margin-top: 12px;
+      width: 100%;
+      height: 130px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 12px 14px;
+      font-size: 17px;
+      resize: vertical;
+      outline: none;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.35);
+    }
+    textarea#typed:focus { border-color: var(--neon-cyan); box-shadow: 0 0 0 1px rgba(73,245,255,0.4), inset 0 0 10px rgba(73,245,255,0.15); }
+
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+    button {
+      background: linear-gradient(135deg, rgba(73,245,255,0.16), rgba(255,77,210,0.16));
+      border: 1px solid rgba(73,245,255,0.5);
+      color: #e8f8ff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.15s ease, border 0.15s ease;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 0 12px rgba(73,245,255,0.35); }
+    button.secondary { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.12); color: var(--text); }
+
+    .stats { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+    }
+    .card h3 { margin: 0; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .card .value { margin-top: 6px; font-size: 26px; font-weight: 700; }
+    .card .note { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    .keyboard { margin-top: 20px; display: grid; gap: 8px; }
+    .key-row { display: grid; gap: 8px; grid-template-columns: repeat(15, minmax(34px, 1fr)); }
+    .key {
+      position: relative;
+      padding: 9px 6px;
+      border-radius: 8px;
+      text-align: center;
+      background: linear-gradient(145deg, rgba(12,14,22,0.9), rgba(12,14,22,0.7));
+      border: 1px solid rgba(73,245,255,0.25);
+      color: var(--text);
+      box-shadow: 0 3px 0 rgba(0,0,0,0.45), 0 0 10px rgba(73,245,255,0.08);
+      user-select: none;
+      transition: box-shadow 0.08s ease, transform 0.08s ease, border 0.1s ease, color 0.1s ease;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+    .key.active {
+      color: #0c0d14;
+      background: linear-gradient(145deg, var(--neon-cyan), var(--neon-pink));
+      border-color: rgba(255,255,255,0.8);
+      box-shadow: 0 0 12px rgba(73,245,255,0.6), 0 0 18px rgba(255,77,210,0.35);
+      transform: translateY(1px);
+    }
+    .key.wide { grid-column: span 2; }
+    .key.space { grid-column: span 5; }
+    .key.meta { color: var(--muted); }
+
+    .history { margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 8px 6px; text-align: left; }
+    th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+    tr:nth-child(odd) td { background: rgba(255,255,255,0.02); }
+    .error-text { color: var(--error); }
+
+    @media (max-width: 720px) {
+      .prompt-row { grid-template-columns: 1fr; }
+      .key-row { grid-template-columns: repeat(10, minmax(30px, 1fr)); }
+      .key.space { grid-column: span 8; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <pre class="typewriter-art" aria-hidden="true">      ______________
+     / ____________ \
+    / /##########\ \
+    | |##|    |##| |
+    | |##|____|##| |
+    \ \##########/ /
+     \____________/
+      |  |    |  |
+      |__|____|__|
+      [__________]</pre>
+      <div class="title-block">
+        <h1>Máquina de escribir neón · práctica guiada</h1>
+        <p>Mantén el hábito: ritmo constante, ojos en la frase, manos en las teclas guía.</p>
+      </div>
+      <div class="pill">⌛ cronómetro en vivo · registro local</div>
+    </header>
+
+    <div class="prompt-row">
+      <div class="prompt-box">
+        <div class="prompt-label">Texto a copiar</div>
+        <div class="prompt-text" id="prompt"></div>
+      </div>
+      <div>
+        <label class="prompt-label" for="customText">Frase personalizada (opcional)</label>
+        <textarea id="customText" rows="4" placeholder="Escribe aquí tu frase y pulsa “Usar frase”."></textarea>
+        <div class="controls" style="margin-top:6px;">
+          <button id="useCustom">Usar frase</button>
+          <button class="secondary" id="randomBtn">Nueva aleatoria</button>
+        </div>
+      </div>
+    </div>
+
+    <textarea id="typed" placeholder="Empieza a teclear para iniciar el reloj…"></textarea>
+    <div class="controls">
+      <button id="resetBtn">Reiniciar (misma frase)</button>
+      <button class="secondary" id="clearHistory">Borrar historial local</button>
+    </div>
+
+    <div class="stats">
+      <div class="card"><h3>Tiempo</h3><div class="value" id="time">00:00</div><div class="note">reloj en vivo</div></div>
+      <div class="card"><h3>Velocidad</h3><div class="value" id="wpm">0.0 WPM</div><div class="note">chars/5 por minuto</div></div>
+      <div class="card"><h3>Precisión</h3><div class="value" id="accuracy">100%</div><div class="note">errores: <span id="errors">0</span></div></div>
+      <div class="card"><h3>Progreso</h3><div class="value" id="progress">0%</div><div class="note" id="progressNote">0 / 0 caracteres</div></div>
+    </div>
+
+    <div class="keyboard" id="keyboard"></div>
+
+    <div class="history">
+      <h3 style="margin: 12px 0 6px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;">Sesiones recientes (local)</h3>
+      <table id="historyTable" aria-label="Historial de sesiones">
+        <thead><tr><th>Hora</th><th>WPM</th><th>Precisión</th><th>Tiempo</th><th>Largo</th></tr></thead>
+        <tbody id="historyBody"><tr><td colspan="5" style="color:var(--muted);">Sin datos todavía.</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const phrases = [
+      "El veloz murciélago hindú comía feliz cardillo y kiwi.",
+      "Jovencillo emponzoñado de whisky: ¡qué figurota exhibe!",
+      "La cigüeña tocaba el saxofón detrás del palenque de paja.",
+      "Miércoles y jueves serán los días con mayor flujo vehicular.",
+      "Practicar todos los días sostiene el hábito de escribir rápido.",
+      "Siempre coloca los dedos base en las teclas guía: a s d f y ñ l k.",
+      "Respira hondo, baja la tensión en hombros y muñecas.",
+      "El ritmo constante importa más que la velocidad máxima.",
+      "Quien teclea despacio al principio gana precisión para siempre.",
+      "Cada error es una señal; corrige la postura y continúa.",
+      "Un kilo de kiwis y quinientos gramos de queso fueron suficientes.",
+      "Fix, fax, jazz y show requieren dedos ágiles en la fila superior.",
+      "El pingüino Wenceslao hizo kilómetros bajo exhaustiva lluvia torrencial.",
+    ];
+
+    const keyboardLayout = [
+      ["Esc", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "¿", "Back"],
+      ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "´", "+", "~"],
+      ["Caps", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Ñ", "{", "}", "Enter"],
+      ["Shift", "<", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "-", "Shift"],
+      ["Ctrl", "Alt", "Space", "AltGr", "Ctrl"]
+    ];
+
+    const promptEl = document.getElementById('prompt');
+    const typedEl = document.getElementById('typed');
+    const timeEl = document.getElementById('time');
+    const wpmEl = document.getElementById('wpm');
+    const accuracyEl = document.getElementById('accuracy');
+    const errorsEl = document.getElementById('errors');
+    const progressEl = document.getElementById('progress');
+    const progressNoteEl = document.getElementById('progressNote');
+    const historyBody = document.getElementById('historyBody');
+
+    let prompt = '';
+    let timerId = null;
+    let startTs = null;
+
+    function pad(n) { return n.toString().padStart(2, '0'); }
+
+    function newPrompt(text) {
+      prompt = text || phrases[Math.floor(Math.random() * phrases.length)];
+      promptEl.textContent = prompt;
+      resetSession(false);
+    }
+
+    function resetSession(clearTyped = true) {
+      clearInterval(timerId);
+      timerId = null;
+      startTs = null;
+      if (clearTyped) typedEl.value = '';
+      updateStats();
+    }
+
+    function startTimerOnce() {
+      if (timerId) return;
+      startTs = performance.now();
+      timerId = setInterval(updateStats, 150);
+    }
+
+    function computeStats() {
+      const typed = typedEl.value;
+      const elapsedSec = Math.max(((timerId ? performance.now() : startTs || performance.now()) - (startTs || performance.now())) / 1000, 0.2);
+      const correct = typed.split('').reduce((acc, ch, idx) => acc + (prompt[idx] === ch ? 1 : 0), 0);
+      const extra = Math.max(0, typed.length - prompt.length);
+      const errors = (prompt.length - correct) + extra;
+      const accuracy = prompt.length ? Math.max(0, (correct / prompt.length) * 100) : 100;
+      const wpm = (typed.length / 5) / (elapsedSec / 60);
+      const progress = prompt.length ? Math.min(100, (typed.length / prompt.length) * 100) : 0;
+      return { elapsedSec, correct, errors, accuracy, wpm, progress, typedLen: typed.length };
+    }
+
+    function updateStats() {
+      const stats = computeStats();
+      const minutes = Math.floor(stats.elapsedSec / 60);
+      const seconds = Math.floor(stats.elapsedSec % 60);
+      timeEl.textContent = `${pad(minutes)}:${pad(seconds)}`;
+      wpmEl.textContent = `${stats.wpm.toFixed(1)} WPM`;
+      accuracyEl.textContent = `${stats.accuracy.toFixed(1)}%`;
+      errorsEl.textContent = stats.errors;
+      progressEl.textContent = `${stats.progress.toFixed(0)}%`;
+      progressNoteEl.textContent = `${stats.typedLen} / ${prompt.length} caracteres`;
+    }
+
+    function finishAndStore() {
+      const stats = computeStats();
+      const row = {
+        time: new Date().toLocaleTimeString(),
+        wpm: stats.wpm.toFixed(1),
+        acc: stats.accuracy.toFixed(1),
+        dur: timeEl.textContent,
+        len: `${prompt.length} chars`
+      };
+      const history = JSON.parse(localStorage.getItem('typing-history') || '[]');
+      history.unshift(row);
+      localStorage.setItem('typing-history', JSON.stringify(history.slice(0, 10)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('typing-history') || '[]');
+      if (history.length === 0) {
+        historyBody.innerHTML = '<tr><td colspan="5" style="color:var(--muted);">Sin datos todavía.</td></tr>';
+        return;
+      }
+      historyBody.innerHTML = history.map(item => `
+        <tr>
+          <td>${item.time}</td>
+          <td>${item.wpm}</td>
+          <td>${item.acc}%</td>
+          <td>${item.dur}</td>
+          <td>${item.len}</td>
+        </tr>`).join('');
+    }
+
+    // Keyboard rendering + highlighting
+    const keyboardEl = document.getElementById('keyboard');
+    const keyMap = new Map();
+
+    function renderKeyboard() {
+      keyboardEl.innerHTML = '';
+      keyboardLayout.forEach(row => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'key-row';
+        row.forEach(label => {
+          const key = document.createElement('div');
+          key.className = 'key';
+          key.textContent = label === 'Space' ? '␠' : label;
+          if (["Back","Tab","Caps","Shift","Ctrl","Alt","AltGr","Enter"].includes(label)) key.classList.add('wide', 'meta');
+          if (label === 'Space') key.classList.add('space', 'meta');
+          key.dataset.key = label;
+          rowEl.appendChild(key);
+          keyMap.set(label, key);
+        });
+        keyboardEl.appendChild(rowEl);
+      });
+    }
+
+    function normalizeKey(k) {
+      const map = {
+        ' ': 'Space',
+        'Escape': 'Esc',
+        'Esc': 'Esc',
+        'Backspace': 'Back',
+        'Tab': 'Tab',
+        'CapsLock': 'Caps',
+        'Shift': 'Shift',
+        'Control': 'Ctrl',
+        'Alt': 'Alt',
+        'AltGraph': 'AltGr',
+        'Enter': 'Enter',
+        'Dead': '´',
+        'Quote': "'",
+      };
+      return map[k] || k.toUpperCase();
+    }
+
+    function flashKey(label) {
+      const keyEl = keyMap.get(label);
+      if (!keyEl) return;
+      keyEl.classList.add('active');
+      setTimeout(() => keyEl.classList.remove('active'), 120);
+    }
+
+    document.addEventListener('keydown', (e) => {
+      flashKey(normalizeKey(e.key));
+      if (!timerId && !e.metaKey && !e.ctrlKey) startTimerOnce();
+    });
+    document.addEventListener('keyup', (e) => {
+      const keyEl = keyMap.get(normalizeKey(e.key));
+      if (keyEl) keyEl.classList.remove('active');
+    });
+
+    typedEl.addEventListener('input', () => {
+      if (!timerId) startTimerOnce();
+      updateStats();
+    });
+
+    document.getElementById('randomBtn').addEventListener('click', () => newPrompt());
+    document.getElementById('useCustom').addEventListener('click', () => {
+      const val = document.getElementById('customText').value.trim();
+      if (val) newPrompt(val);
+    });
+    document.getElementById('resetBtn').addEventListener('click', () => resetSession());
+    document.getElementById('clearHistory').addEventListener('click', () => {
+      localStorage.removeItem('typing-history');
+      renderHistory();
+    });
+
+    typedEl.addEventListener('blur', () => typedEl.focus());
+
+    function init() {
+      renderKeyboard();
+      renderHistory();
+      newPrompt();
+      typedEl.focus();
+    }
+
+    window.addEventListener('beforeunload', () => { if (timerId) finishAndStore(); });
+    typedEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.metaKey) {
+        e.preventDefault();
+        finishAndStore();
+        newPrompt();
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>
