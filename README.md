@@ -190,6 +190,7 @@ python3 -m experiments.t2_ramsey_decay
 python3 -m experiments.rabi
 python3 -m experiments.ramsey
 python3 -m experiments.echo
+python3 -m experiments.randomized_benchmarking --lengths 2 4 8 16 --trials 20 --p-depol 0.01
 ```
 
 Both scripts are self-contained and print PASS/summary lines for sanity checks.
