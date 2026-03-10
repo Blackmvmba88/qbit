@@ -197,6 +197,15 @@ Both scripts are self-contained and print PASS/summary lines for sanity checks.
 
 ---
 
+# Theory and Modeling Assumptions
+
+Short theory notes aligned with the code:
+
+- docs/theory.md — LC quantization, Josephson, transmon, cQED, control, noise, readout, RB, assumptions.
+- docs/cqed.md — Jaynes–Cummings, dispersive limit, readout response, validity limits.
+
+---
+
 # Installation
 
 Clone repository
