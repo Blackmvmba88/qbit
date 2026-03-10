@@ -187,6 +187,9 @@ python3 -m experiments.vacuum_rabi
 python3 -m experiments.dispersive_shift
 python3 -m experiments.t1_decay
 python3 -m experiments.t2_ramsey_decay
+python3 -m experiments.rabi
+python3 -m experiments.ramsey
+python3 -m experiments.echo
 ```
 
 Both scripts are self-contained and print PASS/summary lines for sanity checks.

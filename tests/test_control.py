@@ -3,6 +3,8 @@ import numpy as np
 
 from control.pulses import square_pulse, gaussian_pulse
 from control.time_evolution import rabi_population
+from control.drive_hamiltonian import build_piecewise_hamiltonians, rotating_frame_h0
+from control.propagator import propagate_piecewise, apply_unitary, excited_population
 
 
 class TestPulses(unittest.TestCase):
@@ -31,7 +33,25 @@ class TestRabi(unittest.TestCase):
         p_det = rabi_population(omega_rabi, times, detuning=2 * omega_rabi)
         self.assertLess(p_det.max(), p_res.max())
 
+    def test_piecewise_propagator_matches_analytic(self):
+        omega_q = 5e9
+        omega_d = 5e9
+        delta = omega_q - omega_d
+        rabi_rate = 20e6
+        duration = 50e-9
+        sample_rate = 1e9
+        n = int(duration * sample_rate)
+        envelopes = [rabi_rate] * n
+        phases = [0.0] * n
+        Hs = build_piecewise_hamiltonians(rotating_frame_h0(0.0), envelopes, phases, delta)
+        dt = 1.0 / sample_rate
+        U = propagate_piecewise(Hs, dt)
+        state0 = np.array([1.0, 0.0], dtype=complex)
+        state_f = apply_unitary(U, state0)
+        p_exc = excited_population(state_f)
+        expected = np.sin(np.pi * rabi_rate * duration) ** 2
+        self.assertAlmostEqual(p_exc, expected, places=2)
+
 
 if __name__ == "__main__":
     unittest.main()
-
