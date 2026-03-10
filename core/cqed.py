@@ -58,9 +58,28 @@ def vacuum_rabi_splitting(omega_r: float, omega_q: float, g: float) -> float:
     return abs(eigvals[2] - eigvals[1])
 
 
+def dispersive_shift(g: float, delta: float) -> float:
+    """
+    Compute dispersive shift chi = g^2 / delta (GHz).
+    Valid in dispersive regime |delta| >> g.
+    """
+    if delta == 0:
+        raise ValueError("Delta must be nonzero for dispersive approximation.")
+    return g * g / delta
+
+
+def resonator_frequencies_with_qubit(omega_r: float, chi: float) -> tuple[float, float]:
+    """
+    Return resonator frequencies conditioned on qubit state:
+    (omega_r_g, omega_r_e) = (omega_r - chi, omega_r + chi)
+    """
+    return omega_r - chi, omega_r + chi
+
+
 __all__ = [
     "jaynes_cummings_hamiltonian",
     "jaynes_cummings_spectrum",
     "vacuum_rabi_splitting",
+    "dispersive_shift",
+    "resonator_frequencies_with_qubit",
 ]
-
