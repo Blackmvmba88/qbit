@@ -8,6 +8,7 @@ from core.cqed import (
     dispersive_shift,
     resonator_frequencies_with_qubit,
 )
+from core.readout import resonator_response, state_distinguishability
 
 
 class TestCQED(unittest.TestCase):
@@ -27,6 +28,17 @@ class TestCQED(unittest.TestCase):
         omega_g, omega_e = resonator_frequencies_with_qubit(omega_r=6.0, chi=chi)
         self.assertGreater(omega_e, omega_g)
         self.assertAlmostEqual(omega_e - omega_g, 2 * chi, places=6)
+
+    def test_readout_response_separates_states(self):
+        omega_r = 6.5e9
+        chi = 7.7e6
+        omega_d = omega_r
+        kappa = 1e6
+        eps = 1e6
+        a0 = resonator_response(omega_r - chi, omega_d, kappa, eps)
+        a1 = resonator_response(omega_r + chi, omega_d, kappa, eps)
+        d = state_distinguishability(a0, a1)
+        self.assertGreater(d, 0.0)
 
 
 if __name__ == "__main__":
